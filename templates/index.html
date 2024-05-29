@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>데이터베이스 콘텐츠</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>데이터베이스 콘텐츠</h1>
+    <div class="scrollmenu">
+        <button class="custom-btn btn" onclick="location.href='/'">초기화</button>
+        {% for row in tag %}
+        <button class="custom-btn btn" onclick="location.href='/tag/{{ row[0] }}'">#{{ row[0] }}</button>
+        {% endfor %}
+    </div>
+    <table style="table-layout: fixed; word-break: break-all;">
+        <thead>
+            <tr>
+                <th>검색한 URL</th>
+                <th>페이지 제목</th>
+                <th>페이지 링크</th>
+                <th>페이지 컨텐츠</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data %}
+                <tr>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td><a href='{{ row[3] }}'>{{ row[3] }}</a></td>
+                    <td>{{ row[4] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

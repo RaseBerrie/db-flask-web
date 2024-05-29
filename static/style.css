@@ -1,0 +1,89 @@
+body {
+  color: #666;
+  font: 14px/24px "Open Sans", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", Sans-Serif;
+}
+div.scrollmenu {
+  overflow: auto;
+  white-space: nowrap;
+}
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+}
+th,
+td {
+  padding: 6px 15px;
+}
+th {
+  background: #42444e;
+  color: #fff;
+  text-align: left;
+}
+tr:first-child th:first-child {
+  border-top-left-radius: 6px;
+}
+tr:first-child th:last-child {
+  border-top-right-radius: 6px;
+}
+td {
+  border-right: 1px solid #c6c9cc;
+  border-bottom: 1px solid #c6c9cc;
+}
+td:first-child {
+  border-left: 1px solid #c6c9cc;
+}
+tr:nth-child(even) td {
+  background: #eaeaed;
+}
+tr:last-child td:first-child {
+  border-bottom-left-radius: 6px;
+}
+tr:last-child td:last-child {
+  border-bottom-right-radius: 6px;
+}
+button {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-right: 10px;
+  outline: none;
+  border-radius: 6px;
+}
+.custom-btn {
+  width: 130px;
+  height: 40px;
+  border: 2px solid #42444e;
+  font-weight: 500;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  display: inline-block;
+}
+.btn {
+  background: #42444e;
+  color: #fff;
+  z-index: 1;
+}
+.btn:after {
+  position: absolute;
+  content: "";
+  width: 100%;
+  height: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+  background: #e0e5ec;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+}
+.btn:hover {
+ color: #42444e;
+}
+.btn:hover:after {
+ top: 0;
+ height: 100%;
+}
+.btn:active {
+ top: 2px;
+}
