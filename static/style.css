@@ -6,12 +6,10 @@
   font-family: 'Pretendard'; 
   list-style: none;
 }
-
 body {
   display: flex;
   background-color: #F5F6F8;
 }
-
 div.content {
   max-width: 1024px;
   margin: 0 auto;
@@ -71,8 +69,8 @@ tr:last-child td:last-child {
 /***** FORM *****/
 
 form {
+  max-width: 500px;
   text-align: right;
-  margin-bottom: 10px;
 }
 input {
   padding: 6px 15px;
@@ -86,11 +84,21 @@ input {
   color: #fff;
 }
 .container{
-  max-width: 500px;
-  margin-bottom: 5px;
+  max-width: 100%;
+  margin-bottom: 10px;
   text-align: right;
   margin-right: 0;
   padding-right: 0;
+  display: flex;
+}
+.alignbox{
+  width: 50%;
+  position: relative;
+}
+.total-num{
+  text-align: left;
+  position: absolute;
+  bottom: 0;
 }
 .scrollable-dropdown{
   height: auto;

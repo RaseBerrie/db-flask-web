@@ -18,9 +18,23 @@ $('ul li').on('click', function() {
     $(this).addClass('active');
 });
 
-$('.search-panel .dropdown-menu').find('a').click(function(e) {
-    e.preventDefault();
-    var concept = $(this).text();
-    $('.search-panel span#search-concept').text(concept);
-    $('#search-param').val(concept);
-});
+function foldableButton() {
+    $('.see-more').click(function() {
+        $(this).parent('.show-less').hide();
+        $(this).parent('.show-less').siblings('.show-more').show();
+    });
+
+    $('.see-less').click(function() {
+        $(this).parent('.show-more').hide();
+        $(this).parent('.show-more').siblings('.show-less').show();
+    });
+}
+
+function searchMenu() {
+    $('.search-panel .dropdown-menu').find('a').click(function(e) {
+        e.preventDefault();
+        var concept = $(this).text();
+        $('.search-panel span#search-concept').text(concept);
+        $('#search-param').val(concept);
+    });
+}

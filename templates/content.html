@@ -7,6 +7,12 @@
 
 <div class="content">
     <div class="container">
+        <div class="alignbox">
+            {% for row in count %}
+                <div class="total-num">총 데이터 개수: <strong>{{ row[0] }}</strong>개</div>
+            {% endfor %}
+        </div>
+        <div class="alignbox">
         <form id="searchForm">
             <div class="input-group">
                 <div class="input-group-btn search-panel">
@@ -25,6 +31,7 @@
                 <span class="input-group-btn"><button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button></span>
             </div>
         </form>
+        </div>
     </div>
     <table style="table-layout: fixed; word-break: break-all;">
         <thead>
@@ -47,7 +54,7 @@
                             <button class="see-more" id="tag" style="border: none; background-color: #aaa">더보기</button>
                         </div>
                         <div class="show-more" style="display:none">{{ row[4] }}
-                            <button class="see-less" id="tag" style="border: none; background-color: #aaa">접기</button>
+                            <button class="see-less" id="tag" style="border: none;">접기</button>
                         </div>
                         {% else %} {{ row[4] }}
                         {% endif %}
@@ -58,31 +65,17 @@
     </table>
 </div>
 <script>
-$(document).ready(function() {
-    $('.see-more').click(function() {
-        $(this).parent('.show-less').hide();
-        $(this).parent('.show-less').siblings('.show-more').show();
-    });
-
-    $('.see-less').click(function() {
-        $(this).parent('.show-more').hide();
-        $(this).parent('.show-more').siblings('.show-less').show();
-    });
-
-    $('.search-panel .dropdown-menu').find('a').click(function(e) {
-                e.preventDefault();
-                var concept = $(this).text();
-                $('.search-panel span#search-concept').text(concept);
-                $('#search-param').val(concept);
-            });
-
+$(document).ready(function(){
+    searchMenu();
+    foldableButton();
+    
     $('#searchForm').on('submit', function(event) {
         event.preventDefault();
         var menu = $('#search-param').val();
         var param;
 
         switch(menu) {
-            case "도메인 네임":
+            case "서브도메인":
                 param = 'subdomain';
                 break;
             case "제목":
@@ -101,23 +94,32 @@ $(document).ready(function() {
         var query = $('#searchInput').val();
         if (query) {
             $.get("/search/", { menu: param, key: query }, function(data) {
+                totalNum = '총 데이터 개수: <strong>' + data.count[0] + '</strong>개';
+                $('.total-num').html(totalNum);
+
                 var html = '';
-                $.each(data, function(index, row) {
+                $.each(data.data_list, function(index, row) {
                     html += '<tr>';
                     html += '<td>' + row[1] + ' <span id="tag">' + row[0] + '</span></td>';
                     html += '<td>' + row[2] + '</td>';
-                    html += '<td><a href=' + row[3] + '>' + row[3].slice(0, 30) + '...</a></td>';
+                    html += '<td><a href="' + row[3] + '">' + row[3].slice(0, 30);
+                    html += '...</a></td>';
                     if (row[4].length > 40) {
-                        html += '<td><div class="show-less">' + row[4].slice(0, 40) + "..." +
-                        '<button class="see-more" id="tag" style="border: none; background-color: #aaa">더보기</button>' +
-                        '</div><div class="show-more" style="display:none">' + row[4] + '<button class="see-less" id="tag" style="border: none; background-color: #aaa">접기</button>' +
-                        '</div></td>';
+                        html += `<td>
+                        <div class="show-less">` + row[4].slice(0, 40) + `... 
+                            <button class="see-more" id="tag" style="border: none; background-color: #aaa">더보기</button>
+                        </div>
+                        <div class="show-more" style="display:none">` + row[4] +
+                            `<button class="see-less" id="tag" style="border: none;">접기</button>
+                        </div></td>`;
                     } else {
                         html += '<td>' + row[4] + '</td>';
                     }
                     html += '</tr>';
                 });
                 $('#results').html(html);
+                searchMenu();
+                foldableButton();
             });
         }
     });

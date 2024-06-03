@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import mysql.connector
 
 app = Flask(__name__)
@@ -37,10 +37,13 @@ def index():
     data = cur.fetchall()
     data_list = data_fining(data)
 
+    cur.execute("SELECT count(*) FROM searchresult")
+    count = cur.fetchall()
+
     cur.close()
     db_connection.close()
 
-    return render_template('content.html', data=data_list)
+    return render_template('content.html', data=data_list, count=count)
 
 @app.route('/list')
 def search_list():
@@ -66,11 +69,15 @@ def search_result():
     data = cur.fetchall()
     data_list = data_fining(data)
 
-    cur.close()
-    db_connection.close()
+    query = f"SELECT count(*) FROM searchresult WHERE {menu} LIKE %s"
+    cur.execute(query, ('%' + key + '%',))
+    count = cur.fetchall()
 
-    return data_list
-
+    result = {
+        "data_list": data_list,
+        "count": count
+    }
+    return jsonify(result)
 
 ######## APP.RUN ########
 
