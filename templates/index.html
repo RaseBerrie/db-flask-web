@@ -2,35 +2,30 @@
 <html>
 <head>
     <title>데이터베이스 콘텐츠</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </head>
+
 <body>
-    <h1>데이터베이스 콘텐츠</h1>
-    <div class="scrollmenu">
-        <button class="custom-btn btn" onclick="location.href='/'">초기화</button>
-        {% for row in tag %}
-        <button class="custom-btn btn" onclick="location.href='/tag/{{ row[0] }}'">#{{ row[0] }}</button>
-        {% endfor %}
-    </div>
-    <table style="table-layout: fixed; word-break: break-all;">
-        <thead>
-            <tr>
-                <th>검색한 URL</th>
-                <th>페이지 제목</th>
-                <th>페이지 링크</th>
-                <th>페이지 컨텐츠</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in data %}
-                <tr>
-                    <td>{{ row[1] }}</td>
-                    <td>{{ row[2] }}</td>
-                    <td><a href='{{ row[3] }}'>{{ row[3] }}</a></td>
-                    <td>{{ row[4] }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<button class="backToTopBtn"><i class="fas fa-angle-up"></i></button>
+
+<nav class="sidebar-navigation">
+	<ul>
+		<li onclick="location.href='/'"><i class="fas fa-home"></i><span class="tooltip">메인</span></li>
+		<li onclick="location.href='/list'"><i class="fas fa-rectangle-list"></i><span class="tooltip">검색 리스트</span></li>
+		<li onclick="location.href='/parses'"><i class="fas fa-file-pdf"></i><span class="tooltip">파싱 데이터</span></li>
+	</ul>
+</nav>
+
+{% block content %}
+{% endblock %}
+
 </body>
 </html>

@@ -1,0 +1,127 @@
+{% extends 'index.html' %}
+{% block content %}
+
+<script>
+    $('.sidebar-navigation ul li:nth-of-type(1)').addClass('active')
+</script>
+
+<div class="content">
+    <div class="container">
+        <form id="searchForm">
+            <div class="input-group">
+                <div class="input-group-btn search-panel">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                        <span id="search-concept">URL</span> <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu scrollable-dropdown" role="menu">
+                        <li><a href="#">서브도메인</a></li>
+                        <li><a href="#">제목</a></li>
+                        <li><a href="#">URL</a></li>
+                        <li><a href="#">콘텐츠</a></li>
+                    </ul>
+                </div>
+                <input type="hidden" name="search-param" id="search-param" value="URL">
+                <input type="text" class="form-control" id="searchInput" placeholder="Search">
+                <span class="input-group-btn"><button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button></span>
+            </div>
+        </form>
+    </div>
+    <table style="table-layout: fixed; word-break: break-all;">
+        <thead>
+            <tr>
+                <th>서브도메인</th>
+                <th>제목</th>
+                <th>URL</th>
+                <th>콘텐츠</th>
+            </tr>
+        </thead>
+        <tbody id="results">
+            {% for row in data %}
+                <tr>
+                    <td>{{ row[1] }} <span id="tag">{{ row[0] }}</span></td>
+                    <td>{{ row[2] }}</td>
+                    <td><a href="{{ row[3] }}">{{ row[3][:30] }}...</a></td>
+                    <td>
+                        {% if row[4]|length >= 40 %}
+                        <div class="show-less">{{ row[4][:40] }}...
+                            <button class="see-more" id="tag" style="border: none; background-color: #aaa">더보기</button>
+                        </div>
+                        <div class="show-more" style="display:none">{{ row[4] }}
+                            <button class="see-less" id="tag" style="border: none; background-color: #aaa">접기</button>
+                        </div>
+                        {% else %} {{ row[4] }}
+                        {% endif %}
+                    </td> 
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<script>
+$(document).ready(function() {
+    $('.see-more').click(function() {
+        $(this).parent('.show-less').hide();
+        $(this).parent('.show-less').siblings('.show-more').show();
+    });
+
+    $('.see-less').click(function() {
+        $(this).parent('.show-more').hide();
+        $(this).parent('.show-more').siblings('.show-less').show();
+    });
+
+    $('.search-panel .dropdown-menu').find('a').click(function(e) {
+                e.preventDefault();
+                var concept = $(this).text();
+                $('.search-panel span#search-concept').text(concept);
+                $('#search-param').val(concept);
+            });
+
+    $('#searchForm').on('submit', function(event) {
+        event.preventDefault();
+        var menu = $('#search-param').val();
+        var param;
+
+        switch(menu) {
+            case "도메인 네임":
+                param = 'subdomain';
+                break;
+            case "제목":
+                param = 'title';
+                break;
+            case "URL":
+                param = 'url';
+                break;
+            case "콘텐츠":
+                param = 'content';
+                break;
+            default:
+                param = '';
+        }
+
+        var query = $('#searchInput').val();
+        if (query) {
+            $.get("/search/", { menu: param, key: query }, function(data) {
+                var html = '';
+                $.each(data, function(index, row) {
+                    html += '<tr>';
+                    html += '<td>' + row[1] + ' <span id="tag">' + row[0] + '</span></td>';
+                    html += '<td>' + row[2] + '</td>';
+                    html += '<td><a href=' + row[3] + '>' + row[3].slice(0, 30) + '...</a></td>';
+                    if (row[4].length > 40) {
+                        html += '<td><div class="show-less">' + row[4].slice(0, 40) + "..." +
+                        '<button class="see-more" id="tag" style="border: none; background-color: #aaa">더보기</button>' +
+                        '</div><div class="show-more" style="display:none">' + row[4] + '<button class="see-less" id="tag" style="border: none; background-color: #aaa">접기</button>' +
+                        '</div></td>';
+                    } else {
+                        html += '<td>' + row[4] + '</td>';
+                    }
+                    html += '</tr>';
+                });
+                $('#results').html(html);
+            });
+        }
+    });
+});
+</script>
+
+{% endblock %}

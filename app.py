@@ -1,12 +1,7 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, request
 import mysql.connector
 
 app = Flask(__name__)
-
-'''
-set FLASK_APP=app.py
-flask run
-'''
 
 # MySQL 연결 설정
 def get_db_connection():
@@ -17,6 +12,22 @@ def get_db_connection():
         database="searchdb"
     )
 
+def data_fining(data):
+    result = []
+    for line in data:
+        tmp = []
+        if line[0] == "G": tmp.append("Google")
+        else: tmp.append("Bing")
+
+        if ":" in line[1]:
+            str = line[1].split(':')[0]
+            tmp.append(str)
+        else: tmp.append(line[1])
+
+        for i in range(2, 5): tmp.append(line[i])
+        result.append(tmp)
+    return result
+
 @app.route('/')
 def index():
     db_connection = get_db_connection()
@@ -24,28 +35,45 @@ def index():
 
     cur.execute("SELECT * FROM searchresult")
     data = cur.fetchall()
-
-    cur.execute("SELECT tag FROM searchtags")
-    tag = cur.fetchall()
+    data_list = data_fining(data)
 
     cur.close()
     db_connection.close()
 
-    return render_template('index.html', data=data, tag=tag)
+    return render_template('content.html', data=data_list)
 
+@app.route('/list')
+def search_list():
+    return render_template('list.html')
 
-@app.route('/tag/<tagname>')
-def tagsearch(tagname):
+@app.route('/parses')
+def parsed_data():
+    return render_template('parses.html')
+
+@app.route('/search/')
+def search_result():
+    menu = request.args.get('menu', '')
+    key = request.args.get('key', '')
+
+    if menu not in ['subdomain', 'title', 'url', 'content']:
+        return "Invalid search field", 400
+
     db_connection = get_db_connection()
     cur = db_connection.cursor()
 
-    cur.execute(r"select * from searchresult where url like '%{0}%'".format(tagname))
+    query = f"SELECT * FROM searchresult WHERE {menu} LIKE %s"
+    cur.execute(query, ('%' + key + '%',))
     data = cur.fetchall()
+    data_list = data_fining(data)
 
-    cur.execute("SELECT tag FROM searchtags")
-    tag = cur.fetchall()
+    cur.close()
+    db_connection.close()
 
-    return render_template('index.html', data=data, tag=tag)
+    return data_list
+
+
+######## APP.RUN ########
 
 if __name__ == '__main__':
+    # app.run(host='0.0.0.0')
     app.run(debug=True)
