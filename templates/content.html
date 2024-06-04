@@ -43,36 +43,44 @@
             </tr>
         </thead>
         <tbody id="results">
-            {% for row in data %}
-                <tr>
-                    <td>{{ row[1] }} <span id="tag">{{ row[0] }}</span></td>
-                    <td>{{ row[2] }}</td>
-                    <td><a href="{{ row[3] }}">{{ row[3][:30] }}...</a></td>
-                    <td>
-                        {% if row[4]|length >= 40 %}
-                        <div class="show-less">{{ row[4][:40] }}...
-                            <button class="see-more" id="tag" style="border: none; background-color: #aaa">더보기</button>
-                        </div>
-                        <div class="show-more" style="display:none">{{ row[4] }}
-                            <button class="see-less" id="tag" style="border: none;">접기</button>
-                        </div>
-                        {% else %} {{ row[4] }}
-                        {% endif %}
-                    </td> 
-                </tr>
-            {% endfor %}
+            <td colspan="4">
+                <div style="text-align: center; font-size: large; font-weight: bold;">
+                    수정 예정
+                </div>
+                <div style="text-align: center;">
+                    자리 표시자: 회사별 구분 기능 및 회사별 데이터 개수 확인 결과 삽입 <br/>
+                    또한 검색 기능은 정상적으로 사용 가능
+                </div>
+            </td>
         </tbody>
     </table>
+    <div id="loading" style="text-align: center; display: none;">
+        <img src="{{ url_for('static', filename='loading.gif') }}" alt="Loading..."
+        style="margin: 20px; width: 50px; height: 50px;"/>
+    </div>
 </div>
 <script>
 $(document).ready(function(){
     searchMenu();
     foldableButton();
-    
+
+    let page = 1;
+    let loading = false;
+
     $('#searchForm').on('submit', function(event) {
         event.preventDefault();
-        var menu = $('#search-param').val();
-        var param;
+        $('#results').empty();
+        page = 1;
+        loadResults(true);
+    });
+
+    function loadResults(reset) {
+        if (loading) return;
+        loading = true;
+        $('#loading').show();
+        
+        const menu = $('#search-param').val();
+        let param;
 
         switch(menu) {
             case "서브도메인":
@@ -91,13 +99,14 @@ $(document).ready(function(){
                 param = '';
         }
 
-        var query = $('#searchInput').val();
+        const query = $('#searchInput').val();
         if (query) {
-            $.get("/search/", { menu: param, key: query }, function(data) {
-                totalNum = '총 데이터 개수: <strong>' + data.count[0] + '</strong>개';
-                $('.total-num').html(totalNum);
+            $.get("/search/", { menu: param, key: query, page: page }, function(data) {
+                if (reset) {
+                    $('.total-num').html('총 데이터 개수: <strong>' + data.count[0] + '</strong>개');
+                }
 
-                var html = '';
+                let html = '';
                 $.each(data.data_list, function(index, row) {
                     html += '<tr>';
                     html += '<td>' + row[1] + ' <span id="tag">' + row[0] + '</span></td>';
@@ -117,10 +126,22 @@ $(document).ready(function(){
                     }
                     html += '</tr>';
                 });
-                $('#results').html(html);
+                $('#results').append(html);
                 searchMenu();
                 foldableButton();
+                $('#loading').hide();
+                loading = false;
+                page++;
             });
+        } else {
+            $('#loading').hide();
+            loading = false;
+        }
+    }
+
+    $(window).scroll(function() {
+        if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+            loadResults();
         }
     });
 });
