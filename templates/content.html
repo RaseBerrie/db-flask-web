@@ -33,25 +33,12 @@
         </form>
         </div>
     </div>
-    <table style="table-layout: fixed; word-break: break-all;">
+    <table id="results" style="table-layout: fixed; word-break: break-all;">
         <thead>
-            <tr>
-                <th>서브도메인</th>
-                <th>제목</th>
-                <th>URL</th>
-                <th>콘텐츠</th>
-            </tr>
+
         </thead>
-        <tbody id="results">
-            <td colspan="4">
-                <div style="text-align: center; font-size: large; font-weight: bold;">
-                    수정 예정
-                </div>
-                <div style="text-align: center;">
-                    자리 표시자: 회사별 구분 기능 및 회사별 데이터 개수 확인 결과 삽입 <br/>
-                    또한 검색 기능은 정상적으로 사용 가능
-                </div>
-            </td>
+        <tbody>
+
         </tbody>
     </table>
     <div id="loading" style="text-align: center; display: none;">
@@ -66,6 +53,7 @@ $(document).ready(function(){
 
     let page = 1;
     let loading = false;
+    let endofdata = false;
 
     $('#searchForm').on('submit', function(event) {
         event.preventDefault();
@@ -78,7 +66,6 @@ $(document).ready(function(){
         if (loading) return;
         loading = true;
         $('#loading').show();
-        
         const menu = $('#search-param').val();
         let param;
 
@@ -103,10 +90,12 @@ $(document).ready(function(){
         if (query) {
             $.get("/search/", { menu: param, key: query, page: page }, function(data) {
                 if (reset) {
-                    $('.total-num').html('총 데이터 개수: <strong>' + data.count[0] + '</strong>개');
+                    endofdata = false
+                    $('.total-num').html('검색 결과: <strong>' + data.count[0] + '</strong>개');
+                    $('#results').append(HTML_THEAD);
                 }
-
-                let html = '';
+                
+                let html = "";
                 $.each(data.data_list, function(index, row) {
                     html += '<tr>';
                     html += '<td>' + row[1] + ' <span id="tag">' + row[0] + '</span></td>';
@@ -126,12 +115,19 @@ $(document).ready(function(){
                     }
                     html += '</tr>';
                 });
+                html += '</tbody>'
                 $('#results').append(html);
+    
                 searchMenu();
                 foldableButton();
+
                 $('#loading').hide();
                 loading = false;
                 page++;
+
+                let pagecount = 0;
+                pagecount = parseInt(data.count[0]) / 20;
+                if(page > pagecount + 1) endofdata = true;
             });
         } else {
             $('#loading').hide();
@@ -140,7 +136,8 @@ $(document).ready(function(){
     }
 
     $(window).scroll(function() {
-        if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+        if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100 && !endofdata) {
+            console.log(endofdata)
             loadResults();
         }
     });

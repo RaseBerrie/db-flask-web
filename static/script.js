@@ -1,3 +1,12 @@
+HTML_THEAD = `<thead>
+                <tr>
+                    <th>서브도메인</th>
+                    <th>제목</th>
+                    <th>URL</th>
+                    <th>콘텐츠</th>
+                </tr>
+            </thead> <tbody>`
+
 function scrollTop() {
     if ($(window).scrollTop() > 500) {
         $(".backToTopBtn").addClass("active");

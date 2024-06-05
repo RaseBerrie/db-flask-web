@@ -17,11 +17,27 @@ def query_database(query, args=(), one=False):
     conn.close()
     return (r[0] if r else None) if one else r
 
+def data_fining(data):
+    result = []
+    for line in data:
+        tmp = []
+        if line[0] == "G": tmp.append("Google")
+        else: tmp.append("Bing")
+
+        if ":" in line[1]:
+            str = line[1].split(':')[0]
+            tmp.append(str)
+        else: tmp.append(line[1])
+
+        for i in range(2, 5): tmp.append(line[i])
+        result.append(tmp)
+    return result
+
 @app.route('/')
 def index():
-    count = query_database('SELECT COUNT(*) FROM searchresult')
-    data = query_database('SELECT * FROM searchresult LIMIT 20')
-    return render_template('content.html', count=count, data=data)
+    query = f"SELECT COUNT(*) FROM searchresult"
+    count = query_database(query=query)
+    return render_template('content.html', count=count)
 
 @app.route('/search/', methods=['GET'])
 def search():
@@ -36,7 +52,9 @@ def search():
         count = query_database(query, (f'%{key}%',))
         
         query = f"SELECT * FROM searchresult WHERE {menu} LIKE %s LIMIT %s OFFSET %s"
-        data_list = query_database(query, (f'%{key}%', per_page, offset))
+        data = query_database(query, (f'%{key}%', per_page, offset))
+
+        data_list = data_fining(data)
     else:
         count = [(0,)]
         data_list = []
@@ -44,4 +62,5 @@ def search():
     return jsonify(count=count, data_list=data_list)
 
 if __name__ == '__main__':
+    # app.run('0.0.0.0')
     app.run(debug=True)
