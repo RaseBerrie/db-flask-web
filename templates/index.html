@@ -16,17 +16,24 @@
 
 <body>
 <button class="backToTopBtn"><i class="fas fa-angle-up"></i></button>
+<div class="page-wrapper">
+  <div class="nav-wrapper">
+    <nav>
+      <div class="nav-container">
+        <ul class="nav-tabs">
+          <li class="nav-tab" onclick="location.href='/';">메인</li>
+          <li class="nav-tab" onclick="location.href='/list';">검색 리스트</li>
+          <li class="nav-tab" onclick="location.href='/parses';">파싱 데이터</li>
+        </ul>
+      </div>
+    </nav>
+  </div>
 
-<nav class="sidebar-navigation">
-	<ul>
-		<li onclick="location.href='/'"><i class="fas fa-home"></i><span class="tooltip">메인</span></li>
-		<li onclick="location.href='/list'"><i class="fas fa-rectangle-list"></i><span class="tooltip">검색 리스트</span></li>
-		<li onclick="location.href='/parses'"><i class="fas fa-file-pdf"></i><span class="tooltip">파싱 데이터</span></li>
-	</ul>
-</nav>
-
-{% block content %}
-{% endblock %}
+  <div class="content">
+      {% block content %}
+      {% endblock %}
+  </div>
+</div>
 
 </body>
 </html>

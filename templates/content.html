@@ -1,146 +1,85 @@
 {% extends 'index.html' %}
 {% block content %}
 
-<script>
-    $('.sidebar-navigation ul li:nth-of-type(1)').addClass('active')
-</script>
-
-<div class="content">
-    <div class="container">
-        <div class="alignbox">
-            {% for row in count %}
-                <div class="total-num">총 데이터 개수: <strong>{{ row[0] }}</strong>개</div>
-            {% endfor %}
-        </div>
-        <div class="alignbox">
-        <form id="searchForm">
-            <div class="input-group">
-                <div class="input-group-btn search-panel">
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                        <span id="search-concept">URL</span> <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu scrollable-dropdown" role="menu">
-                        <li><a href="#">서브도메인</a></li>
-                        <li><a href="#">제목</a></li>
-                        <li><a href="#">URL</a></li>
-                        <li><a href="#">콘텐츠</a></li>
-                    </ul>
-                </div>
-                <input type="hidden" name="search-param" id="search-param" value="URL">
-                <input type="text" class="form-control" id="searchInput" placeholder="Search">
-                <span class="input-group-btn"><button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button></span>
-            </div>
-        </form>
-        </div>
+<div class="top-option-box">
+    <div class="top-options">
+        <a><span class="root-url selected">lginnotek.com</span>(50)</a>
+        <a><span class="root-url">bing.com</span>(50)</a>
     </div>
-    <table id="results" style="table-layout: fixed; word-break: break-all;">
-        <thead>
-
-        </thead>
-        <tbody>
-
-        </tbody>
-    </table>
-    <div id="loading" style="text-align: center; display: none;">
-        <img src="{{ url_for('static', filename='loading.gif') }}" alt="Loading..."
-        style="margin: 20px; width: 50px; height: 50px;"/>
+    <div class="top-options">
+        <a><span class="bookmark selected">로그인 페이지</span>(50)</a>
+        <a><span class="bookmark">관리자 페이지</span>(50)</a>        
     </div>
 </div>
+
+<div class="top-container">
+    <div class="top-align-box">
+        <div class="top-total">
+            검색 결과: <strong><span class="total-count"></span></strong>개
+        </div>
+    </div>
+
+    <div class="top-align-box">
+    <form id="searchForm">
+        <div class="input-group">
+            <div class="input-group-btn search-panel">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    <span id="search-concept">URL</span> <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu scrollable-dropdown" role="menu">
+                    <li><a href="#">서브도메인</a></li>
+                    <li><a href="#">제목</a></li>
+                    <li><a href="#">URL</a></li>
+                    <li><a href="#">콘텐츠</a></li>
+                </ul>
+            </div>
+            <input type="hidden" name="search-param" id="search-param" value="URL">
+            <input type="text" class="form-control" id="searchInput" placeholder="Search">
+            <span class="input-group-btn"><button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button></span>
+        </div>
+    </form>
+    </div>
+</div>
+
+<table style="table-layout: fixed; word-break: break-all;">
+    <thead>
+        <tr>
+            <th>서브도메인</th>
+            <th>제목</th>
+            <th>URL</th>
+            <th>콘텐츠</th>
+        </tr>
+    </thead>
+    <tbody id="results"></tbody>
+</table>
+
+<div id="loading" style="text-align: center; display: none;">
+    <img src="{{ url_for('static', filename='loading.gif') }}" alt="Loading..."
+    style="margin: 20px; width: 50px; height: 50px;"/>
+</div>
+
 <script>
-$(document).ready(function(){
-    searchMenu();
-    foldableButton();
+var page = 1;
+var loading = false;
+var endofdata = false;
 
-    let page = 1;
-    let loading = false;
-    let endofdata = false;
+loadInitiateResults(true);
+var queryed = false;
 
-    $('#searchForm').on('submit', function(event) {
-        event.preventDefault();
-        $('#results').empty();
-        page = 1;
-        loadResults(true);
-    });
+$('#searchForm').on('submit', function(event) {
+    event.preventDefault();
+    $('#results').empty();
 
-    function loadResults(reset) {
-        if (loading) return;
-        loading = true;
-        $('#loading').show();
-        const menu = $('#search-param').val();
-        let param;
+    page = 1;
+    queryed = true;
+    loadResults(true);
+});
 
-        switch(menu) {
-            case "서브도메인":
-                param = 'subdomain';
-                break;
-            case "제목":
-                param = 'title';
-                break;
-            case "URL":
-                param = 'url';
-                break;
-            case "콘텐츠":
-                param = 'content';
-                break;
-            default:
-                param = '';
-        }
-
-        const query = $('#searchInput').val();
-        if (query) {
-            $.get("/search/", { menu: param, key: query, page: page }, function(data) {
-                if (reset) {
-                    endofdata = false
-                    $('.total-num').html('검색 결과: <strong>' + data.count[0] + '</strong>개');
-                    $('#results').append(HTML_THEAD);
-                }
-                
-                let html = "";
-                $.each(data.data_list, function(index, row) {
-                    html += '<tr>';
-                    html += '<td>' + row[1] + ' <span id="tag">' + row[0] + '</span></td>';
-                    html += '<td>' + row[2] + '</td>';
-                    html += '<td><a href="' + row[3] + '">' + row[3].slice(0, 30);
-                    html += '...</a></td>';
-                    if (row[4].length > 40) {
-                        html += `<td>
-                        <div class="show-less">` + row[4].slice(0, 40) + `... 
-                            <button class="see-more" id="tag" style="border: none; background-color: #aaa">더보기</button>
-                        </div>
-                        <div class="show-more" style="display:none">` + row[4] +
-                            `<button class="see-less" id="tag" style="border: none;">접기</button>
-                        </div></td>`;
-                    } else {
-                        html += '<td>' + row[4] + '</td>';
-                    }
-                    html += '</tr>';
-                });
-                html += '</tbody>'
-                $('#results').append(html);
-    
-                searchMenu();
-                foldableButton();
-
-                $('#loading').hide();
-                loading = false;
-                page++;
-
-                let pagecount = 0;
-                pagecount = parseInt(data.count[0]) / 20;
-                if(page > pagecount + 1) endofdata = true;
-            });
-        } else {
-            $('#loading').hide();
-            loading = false;
-        }
+$(window).scroll(function() {
+    if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100 && !endofdata) {
+        if (queryed) endofdata = loadResults();
+        else endofdata = loadInitiateResults();
     }
-
-    $(window).scroll(function() {
-        if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100 && !endofdata) {
-            console.log(endofdata)
-            loadResults();
-        }
-    });
 });
 </script>
 

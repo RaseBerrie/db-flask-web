@@ -33,13 +33,27 @@ def data_fining(data):
         result.append(tmp)
     return result
 
-@app.route('/')
-def index():
-    query = f"SELECT COUNT(*) FROM searchresult"
-    count = query_database(query=query)
-    return render_template('content.html', count=count)
 
-@app.route('/search/', methods=['GET'])
+@app.route('/')
+def main():
+    return render_template('content.html')
+
+@app.route('/index', methods=['GET'])
+def index():
+    page = int(request.args.get('page', 1))
+    per_page = 20
+    offset = (page - 1) * per_page
+    
+    query = f"SELECT COUNT(*) FROM searchresult"
+    count = query_database(query)
+    
+    query = f"SELECT * FROM searchresult LIMIT %s OFFSET %s"
+    data = query_database(query, (per_page, offset))
+    data_list = data_fining(data)
+
+    return jsonify(count=count, data_list=data_list)
+
+@app.route('/search', methods=['GET'])
 def search():
     menu = request.args.get('menu', '')
     key = request.args.get('key', '')
@@ -60,6 +74,18 @@ def search():
         data_list = []
 
     return jsonify(count=count, data_list=data_list)
+
+@app.route('/list')
+def list():
+    query = f"SELECT * FROM searchkeys"
+    data = query_database(query=query)
+
+    return render_template('list.html', data=data)
+
+@app.route('/parses')
+def parses():
+
+    return render_template('parses.html')
 
 if __name__ == '__main__':
     # app.run('0.0.0.0')
