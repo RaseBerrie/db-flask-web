@@ -3,12 +3,20 @@
 
 <div class="top-option-box">
     <div class="top-options">
-        <a><span class="root-url selected">lginnotek.com</span>(50)</a>
-        <a><span class="root-url">bing.com</span>(50)</a>
+        <a><span class="root-url selected">lginnotek.com</span> (0)</a>
+        <a><span class="root-url">lgcare.com</span> (0)</a>
+        <a><span class="root-url">isaknox.co.kr</span> (0)</a>
+        <a><span class="root-url">lgcaremall.com</span> (0)</a>
     </div>
     <div class="top-options">
-        <a><span class="bookmark selected">로그인 페이지</span>(50)</a>
-        <a><span class="bookmark">관리자 페이지</span>(50)</a>        
+        <a href="#" onclick="submitForm('login');">
+            <span class="bookmark selected">로그인 페이지</span>
+            (<span class="login count"></span>)
+        </a>        
+        <a href="#" onclick="submitForm('admin');">
+            <span class="bookmark">관리자 페이지</span>
+            (<span class="admin count"></span>)
+        </a>        
     </div>
 </div>
 
@@ -35,7 +43,7 @@
             </div>
             <input type="hidden" name="search-param" id="search-param" value="URL">
             <input type="text" class="form-control" id="searchInput" placeholder="Search">
-            <span class="input-group-btn"><button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button></span>
+            <span class="input-group-btn"><button class="btn btn-default" id="submitButton" type="submit"><span class="glyphicon glyphicon-search"></span></button></span>
         </div>
     </form>
     </div>
@@ -62,9 +70,9 @@
 var page = 1;
 var loading = false;
 var endofdata = false;
+var queryed = false;
 
 loadInitiateResults(true);
-var queryed = false;
 
 $('#searchForm').on('submit', function(event) {
     event.preventDefault();

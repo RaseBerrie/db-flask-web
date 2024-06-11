@@ -41,6 +41,9 @@ body {
   padding: 10px;
   text-align: left;
 }
+.top-options a{
+  color: #666;
+}
 .top-options span{
   text-decoration: underline;
 }
@@ -53,6 +56,9 @@ body {
 }
 .top-options .selected{
   font-weight: 700;
+}
+.top-options a .count{
+  text-decoration: none;
 }
 
 /***** TOTAL *****/

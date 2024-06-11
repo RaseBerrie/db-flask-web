@@ -35,6 +35,11 @@ function searchMenu() {
     });
 }
 
+function submitForm(query) {
+    $('#searchInput').val(query);
+    $('#submitButton').trigger("click");
+}
+
 function loadInitiateResults(reset) {
     if (loading) return;
     loading = true;
@@ -44,6 +49,8 @@ function loadInitiateResults(reset) {
         if (reset) {
             endofdata = false
             $('.total-count').html(data.count[0]);
+            $('.login.count').html(data.count[1]);
+            $('.admin.count').html(data.count[2]);
             $('#results').append('<tbody>');
         }
         

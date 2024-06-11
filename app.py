@@ -33,7 +33,6 @@ def data_fining(data):
         result.append(tmp)
     return result
 
-
 @app.route('/')
 def main():
     return render_template('content.html')
@@ -46,6 +45,12 @@ def index():
     
     query = f"SELECT COUNT(*) FROM searchresult"
     count = query_database(query)
+
+    query = f"SELECT COUNT(*) FROM searchresult WHERE url LIKE '%login%'"
+    count += query_database(query)
+
+    query = f"SELECT COUNT(*) FROM searchresult WHERE url LIKE '%admin%'"
+    count += query_database(query)
     
     query = f"SELECT * FROM searchresult LIMIT %s OFFSET %s"
     data = query_database(query, (per_page, offset))
@@ -88,5 +93,5 @@ def parses():
     return render_template('parses.html')
 
 if __name__ == '__main__':
-    # app.run('0.0.0.0')
-    app.run(debug=True)
+    app.run('0.0.0.0')
+    # app.run(debug=True)
