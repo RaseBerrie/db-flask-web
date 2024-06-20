@@ -1,51 +1,43 @@
 {% extends 'index.html' %}
 {% block content %}
 
-<div class="top-option-box">
-    <div class="top-options">
-        <a><span class="root-url selected">lginnotek.com</span> (0)</a>
-        <a><span class="root-url">lgcare.com</span> (0)</a>
-        <a><span class="root-url">isaknox.co.kr</span> (0)</a>
-        <a><span class="root-url">lgcaremall.com</span> (0)</a>
-    </div>
-    <div class="top-options">
-        <a href="#" onclick="submitForm('login');">
-            <span class="bookmark selected">로그인 페이지</span>
-            (<span class="login count"></span>)
-        </a>        
-        <a href="#" onclick="submitForm('admin');">
-            <span class="bookmark">관리자 페이지</span>
-            (<span class="admin count"></span>)
-        </a>        
-    </div>
-</div>
+<script>
+    $("#content").addClass("selected");
+</script>
 
 <div class="top-container">
     <div class="top-align-box">
-        <div class="top-total">
-            검색 결과: <strong><span class="total-count"></span></strong>개
-        </div>
+        <button class="btn btn-default" id="download">
+            CSV 다운로드
+        </button>
     </div>
 
     <div class="top-align-box">
     <form id="searchForm">
         <div class="input-group">
-            <div class="input-group-btn search-panel">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                    <span id="search-concept">URL</span> <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu scrollable-dropdown" role="menu">
-                    <li><a href="#">서브도메인</a></li>
-                    <li><a href="#">제목</a></li>
-                    <li><a href="#">URL</a></li>
-                    <li><a href="#">콘텐츠</a></li>
-                </ul>
-            </div>
-            <input type="hidden" name="search-param" id="search-param" value="URL">
-            <input type="text" class="form-control" id="searchInput" placeholder="Search">
-            <span class="input-group-btn"><button class="btn btn-default" id="submitButton" type="submit"><span class="glyphicon glyphicon-search"></span></button></span>
+        <div class="input-group-btn search-panel">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            <span id="search-concept">URL</span> <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu scrollable-dropdown" role="menu">
+            <li><a href="#">서브도메인</a></li>
+            <li><a href="#">제목</a></li>
+            <li><a href="#">URL</a></li>
+            <li><a href="#">콘텐츠</a></li>
+        </ul>
+        </div>
+        <input type="hidden" name="search-param" id="search-param" value="URL">
+        <input type="text" class="form-control" id="searchInput" placeholder="Search">
+        <span class="input-group-btn"><button class="btn btn-default" id="submitButton" type="submit"><span class="glyphicon glyphicon-search"></span></button></span>
         </div>
     </form>
+    </div>
+</div>
+
+<div class="body-container">
+<div class="top-align-box">
+    <div class="top-total">
+        검색 결과: <strong><span class="total-count"></span></strong>개
     </div>
 </div>
 
@@ -65,6 +57,7 @@
     <img src="{{ url_for('static', filename='loading.gif') }}" alt="Loading..."
     style="margin: 20px; width: 50px; height: 50px;"/>
 </div>
+</div>
 
 <script>
 var page = 1;
@@ -72,6 +65,7 @@ var loading = false;
 var endofdata = false;
 var queryed = false;
 
+sideMenu();
 loadInitiateResults(true);
 
 $('#searchForm').on('submit', function(event) {
@@ -90,5 +84,6 @@ $(window).scroll(function() {
     }
 });
 </script>
+</div>
 
 {% endblock %}

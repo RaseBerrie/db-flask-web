@@ -26,6 +26,50 @@ function foldableButton() {
     });
 }
 
+function jsonToCsv(items) {
+    const header = Object.keys(items[0]);
+    const headerString = ["se", "subdomain", "title", "url", "content"].join('`');
+
+    const replacer = (key, value) => value ?? '';
+    const rowItems = items.map((row) =>
+        header
+        .map((fieldName) => JSON.stringify(row[fieldName], replacer))
+        .join('`')
+    );
+
+    const csv = [headerString, ...rowItems].join('\r\n');
+    return csv;
+}
+
+function downloadFile(url) {
+    $("#download").click(function() {
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        
+        link.setAttribute("download", "data.csv");
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+}
+
+function sideMenu() {
+    $('.summary').click(function() {
+        var sideOptions = $(this).siblings('.side-options');
+        var icon = $(this).find('.fa-solid');
+        
+        sideOptions.toggle();
+        if (sideOptions.is(':visible')) {
+            icon.removeClass('fa-circle-chevron-right');
+            icon.addClass('fa-circle-chevron-down');
+        } else {
+            icon.removeClass('fa-circle-chevron-down');
+            icon.addClass('fa-circle-chevron-right');
+        }
+    })
+}
+
 function searchMenu() {
     $('.search-panel .dropdown-menu').find('a').click(function(e) {
         e.preventDefault();
@@ -35,9 +79,24 @@ function searchMenu() {
     });
 }
 
-function submitForm(query) {
-    $('#searchInput').val(query);
-    $('#submitButton').trigger("click");
+function topMenu() {
+    $('.nav-tabs #drop-btn-1').find('a').click(function(e) {
+        e.preventDefault();
+        var concept = $(this).text();
+        $('#drop-1').text(concept);
+    });
+
+    $('.nav-tabs #drop-btn-2').find('a').click(function(e) {
+        e.preventDefault();
+        var concept = $(this).text();
+        $('#drop-2').text(concept);
+    });
+
+    $('.nav-tabs #drop-btn-3').find('a').click(function(e) {
+        e.preventDefault();
+        var concept = $(this).text();
+        $('#drop-3').text(concept);
+    });
 }
 
 function loadInitiateResults(reset) {
@@ -49,25 +108,25 @@ function loadInitiateResults(reset) {
         if (reset) {
             endofdata = false
             $('.total-count').html(data.count[0]);
-            $('.login.count').html(data.count[1]);
-            $('.admin.count').html(data.count[2]);
             $('#results').append('<tbody>');
         }
+
+        const csv = jsonToCsv(data.data_full_list);
+        console.log(csv);
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf8mb4;'});
+        const csvUrl = URL.createObjectURL(blob);
         
         let html = "";
         $.each(data.data_list, function(index, row) {
             html += '<tr>';
-            html += '<td>' + row[1] + ' <span id="tag"';
-            if (row[0] === "Google") {html += ' style="background-color: CornflowerBlue;">'+ row[0] + '</span></td>'}
-            else {html += ' style="background-color: coral;">'+ row[0] + '</span></td>'};
-            row[0] + '</span></td>';
+            html += '<td>' + row[1] + ' <span id="tag">' + row[0] + '</span></td>'
             html += '<td>' + row[2] + '</td>';
             html += '<td><a href="' + row[3] + '">' + row[3].slice(0, 30);
             html += '...</a></td>';
             if (row[4].length > 40) {
                 html += `<td>
                 <div class="show-less">` + row[4].slice(0, 40) + `... 
-                    <button class="see-more" id="tag" style="border: none; background-color: #aaa">더보기</button>
+                    <button class="see-more" id="tag" style="border: none; background-color: #B9BBBF">더보기</button>
                 </div>
                 <div class="show-more" style="display:none">` + row[4] +
                     `<button class="see-less" id="tag" style="border: none;">접기</button>
@@ -83,6 +142,7 @@ function loadInitiateResults(reset) {
 
         searchMenu();
         foldableButton();
+        downloadFile(csvUrl);
 
         loading = false;
         page++;
@@ -127,20 +187,21 @@ function loadResults(reset) {
                 $('#results').append('<tbody>');
             }
             
+            const csv = jsonToCsv(data.data_full_list);
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf8mb4;'});
+            const csvUrl = URL.createObjectURL(blob);
+
             let html = "";
             $.each(data.data_list, function(index, row) {
                 html += '<tr>';
-                html += '<td>' + row[1] + ' <span id="tag"';
-                if (row[0] === "Google") {html += ' style="background-color: CornflowerBlue;">'+ row[0] + '</span></td>'}
-                else {html += ' style="background-color: coral;">'+ row[0] + '</span></td>'};
-                row[0] + '</span></td>';
+                html += '<td>' + row[1] + ' <span id="tag">' + row[0] + '</span></td>';
                 html += '<td>' + row[2] + '</td>';
                 html += '<td><a href="' + row[3] + '">' + row[3].slice(0, 30);
                 html += '...</a></td>';
                 if (row[4].length > 40) {
                     html += `<td>
                     <div class="show-less">` + row[4].slice(0, 40) + `... 
-                        <button class="see-more" id="tag" style="border: none; background-color: #aaa">더보기</button>
+                        <button class="see-more" id="tag" style="border: none;">더보기</button>
                     </div>
                     <div class="show-more" style="display:none">` + row[4] +
                         `<button class="see-less" id="tag" style="border: none;">접기</button>
@@ -155,11 +216,12 @@ function loadResults(reset) {
             $('#results').append(html);
             $('#loading').hide();
 
-            searchMenu();
-            foldableButton();
-
             loading = false;
             page++;
+
+            searchMenu();
+            foldableButton();
+            downloadFile(csvUrl);
 
             let pagecount = 0;
             pagecount = parseInt(data.count[0]) / 20;

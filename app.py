@@ -35,63 +35,84 @@ def data_fining(data):
 
 @app.route('/')
 def main():
+    return render_template('dashboard.html')
+
+@app.route('/content')
+def content():
     return render_template('content.html')
 
 @app.route('/index', methods=['GET'])
 def index():
     page = int(request.args.get('page', 1))
-    per_page = 20
+    per_page = 30
     offset = (page - 1) * per_page
     
     query = f"SELECT COUNT(*) FROM searchresult"
     count = query_database(query)
-
-    query = f"SELECT COUNT(*) FROM searchresult WHERE url LIKE '%login%'"
-    count += query_database(query)
-
-    query = f"SELECT COUNT(*) FROM searchresult WHERE url LIKE '%admin%'"
-    count += query_database(query)
     
-    query = f"SELECT * FROM searchresult LIMIT %s OFFSET %s"
+    query = f"SELECT se, subdomain, title, url, content FROM searchresult"
+    data_full = query_database(query)
+    data_full_list = data_fining(data_full)
+
+    query = f"SELECT se, subdomain, title, url, content FROM searchresult LIMIT %s OFFSET %s"
     data = query_database(query, (per_page, offset))
     data_list = data_fining(data)
 
-    return jsonify(count=count, data_list=data_list)
+    return jsonify(count=count, data_list=data_list, data_full_list=data_full_list)
 
 @app.route('/search', methods=['GET'])
 def search():
     menu = request.args.get('menu', '')
     key = request.args.get('key', '')
     page = int(request.args.get('page', 1))
-    per_page = 20
+    per_page = 30
     offset = (page - 1) * per_page
     
     if menu and key:
         query = f"SELECT COUNT(*) FROM searchresult WHERE {menu} LIKE %s"
         count = query_database(query, (f'%{key}%',))
-        
-        query = f"SELECT * FROM searchresult WHERE {menu} LIKE %s LIMIT %s OFFSET %s"
-        data = query_database(query, (f'%{key}%', per_page, offset))
 
+        query = f"SELECT se, subdomain, title, url, content FROM searchresult WHERE {menu} LIKE %s"
+        data_full = query_database(query, (f'%{key}%',))
+        data_full_list = data_fining(data_full)
+
+        query = f"SELECT se, subdomain, title, url, content FROM searchresult WHERE {menu} LIKE %s LIMIT %s OFFSET %s"
+        data = query_database(query, (f'%{key}%', per_page, offset))
         data_list = data_fining(data)
     else:
         count = [(0,)]
         data_list = []
 
-    return jsonify(count=count, data_list=data_list)
+    return jsonify(count=count, data_list=data_list, data_full_list=data_full_list)
 
-@app.route('/list')
-def list():
-    query = f"SELECT * FROM searchkeys"
-    data = query_database(query=query)
+@app.route('/subdomain')
+def subdomain():
+    return render_template('subdomain.html')
 
-    return render_template('list.html', data=data)
+@app.route('/logins')
+def logins():
+    return render_template('logins.html')
 
-@app.route('/parses')
-def parses():
+@app.route('/admins')
+def admins():
+    return render_template('admins.html')
 
-    return render_template('parses.html')
+@app.route('/files')
+def files():
+    return render_template('files.html')
+
+@app.route('/gits')
+def gits():
+    return render_template('gits.html')
+
+@app.route('/jss')
+def jss():
+    return render_template('jss.html')
+
+@app.route('/showns')
+def showns():
+    return render_template('showns.html')
 
 if __name__ == '__main__':
-    app.run('0.0.0.0')
-    # app.run(debug=True)
+    # app.run('0.0.0.0')
+    app.run(debug=True)
