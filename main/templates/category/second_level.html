@@ -1,0 +1,9 @@
+{% for category in categories %}
+        
+<li class="dropdown-item">
+  <a href="#" onclick="secondLevel('{{ category[0] }}');">
+    {{ category[1] }}
+  </a>
+</li>
+
+{% endfor %}

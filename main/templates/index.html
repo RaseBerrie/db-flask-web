@@ -71,70 +71,26 @@
 
   <div class="page-wrapper">
     <div class="nav-wrapper">
-      <div class="nav-container">
-        <div class="nav-tabs">
-
-          <div class="dropdown" id="drop-btn-1">
-            <button class="nav-tab btn dropdown-toggle" data-toggle="dropdown">
-              <span id="drop-1">회사명</span>
-              <i class="fa-solid fa-caret-down"></i>
-            </button>
-            <ul class="dropdown-menu">
-              <li class="dropdown-item"><a href="#">전체</a></li>
-            </ul>
-          </div>
-
-          <div class="dropdown" id="drop-btn-2">
-            <button class="nav-tab btn dropdown-toggle" data-toggle="dropdown">
-              <span id="drop-2">루트 도메인</span>
-              <i class="fa-solid fa-caret-down"></i>
-            </button>
-            <ul class="dropdown-menu">
-              <li class="dropdown-item"><a href="#">메인</a></li>
-            </ul>
-          </div>
-
-          <div class="dropdown" id="drop-btn-3">
-            <button class="nav-tab btn dropdown-toggle" data-toggle="dropdown">
-              <span id="drop-3">서브 도메인</span>
-              <i class="fa-solid fa-caret-down"></i>
-            </button>
-            <ul class="dropdown-menu">
-              <li class="dropdown-item"><a href="#">메인</a></li>
-            </ul>
-          </div>
-        
-        </div>
-      </div>
+        {% include 'category.html' %}
     </div>
-
     <div class="content-wrapper">
-      <div class="content-dropdown">
-        
-      </div>
-      
-      {% block content %}
-      {% endblock %}
+        {% block content %}{% endblock %}
     </div>
   </div>  
 </div>
-<script>
-  topMenu();
-  
 
-  $(".nav-tab:first-child").addClass("selected");
-  $(function() {
-    function menuClick() {
-      $('#side-nav-list li').on('click', function() {
-        var activeTab = $(this).attr("id");      
-        if(activeTab === "dashboard") {
-          activeTab = "";
-        }
-        location.href = '/' + activeTab;
-      });
+<script>
+$(function() {
+  function menuClick() {
+    $('#side-nav-list li').on('click', function() {
+      var activeTab = $(this).attr("id");
+      if (activeTab != "dashboard" && activeTab != "content") {
+        location.href = '/content/' + activeTab;
+      } else location.href = '/' + activeTab;
     }
-    menuClick();
-  });
+  )} menuClick();
+});
 </script>
+
 </body>
 </html>

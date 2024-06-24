@@ -66,28 +66,22 @@ body {
 
 .nav-tabs {
 	display: flex;
-	font-weight: 600;
 	font-size: 15px;
 	list-style: none;
   border-bottom: none;
 }
 .nav-tab {
 	padding: 5px 20px;
+  font-weight: 700;
   cursor: pointer;
   margin-left: 10px;
   margin-bottom: 10px;
   color: var(--dark-color-1);
   background-color: var(--background-color);
 }
-.nav-tab:not(.selected){
-  opacity: 0.5;
-}
-.nav-tab:not(.selected):hover {
-  transition: all 0.5s ease;
-  opacity: 1;
-}
-.selected {
-  font-weight: 800;
+.nav-tabs .dropdown-menu{
+  right: 0;
+  left: auto;
 }
 
 /***** SIDE MENU *****/

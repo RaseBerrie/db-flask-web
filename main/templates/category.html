@@ -1,0 +1,62 @@
+<div class="nav-container">
+  <div class="nav-tabs">
+
+    <div class="dropdown" id="drop-btn-1">
+      <button class="nav-tab btn dropdown-toggle" data-toggle="dropdown">
+        <span id="drop-1">회사명</span>
+        <i class="fa-solid fa-caret-down"></i>
+      </button>
+      <ul class="dropdown-menu" id="first-level-menu"></ul>
+    </div>
+
+    <div class="dropdown" id="drop-btn-2">
+      <button class="nav-tab btn dropdown-toggle" data-toggle="dropdown">
+        <span id="drop-2">루트 도메인</span>
+        <i class="fa-solid fa-caret-down"></i>
+      </button>
+      <ul class="dropdown-menu" id="second-level-menu">
+        <li class="dropdown-item">
+          <a href="#" style="pointer-events: none;">회사명을 먼저 선택하세요.</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="dropdown" id="drop-btn-3">
+      <button class="nav-tab btn dropdown-toggle" data-toggle="dropdown">
+        <span id="drop-3">서브 도메인</span>
+        <i class="fa-solid fa-caret-down"></i>
+      </button>
+      <ul class="dropdown-menu" id="third-level-menu">
+        <li class="dropdown-item">
+          <a href="#" style="pointer-events: none;">루트 도메인을 먼저 선택하세요.</a>
+        </li>
+      </ul>
+    </div>
+  
+  </div>
+</div>
+
+<script>
+$(function() {
+  $.get("/first_level", function(data) {
+    $('#first-level-menu').html(data);
+    topMenu();
+  })
+})
+
+function firstLevel(categoryId) {
+  document.cookie = "companyId=" + Number(categoryId);
+  $.get("/second_level/" + categoryId, function(data) {
+    $('#second-level-menu').html(data);
+    topMenu();
+  })
+}
+
+function secondLevel(categoryId) {
+  document.cookie = "companyId=" + Number(categoryId);
+  $.get("/third_level/" + categoryId, function(data) {
+    $('#third-level-menu').html(data);
+    topMenu();
+  })
+}
+</script>

@@ -84,12 +84,21 @@ function topMenu() {
         e.preventDefault();
         var concept = $(this).text();
         $('#drop-1').text(concept);
+
+        $('#drop-2').text("루트 도메인");
+        $('#second-level-menu').html('<li class="dropdown-item"><a href="#" style="pointer-events: none;">회사명을 먼저 선택하세요.</a></li>');
+
+        $('#drop-3').text("서브 도메인");
+        $('#third-level-menu').html('<li class="dropdown-item"><a href="#" style="pointer-events: none;">루트 도메인을 먼저 선택하세요.</a></li>');
     });
 
     $('.nav-tabs #drop-btn-2').find('a').click(function(e) {
         e.preventDefault();
         var concept = $(this).text();
         $('#drop-2').text(concept);
+
+        $('#drop-3').text("서브 도메인");
+        $('#third-level-menu').html('<li class="dropdown-item"><a href="#" style="pointer-events: none;">루트 도메인을 먼저 선택하세요.</a></li>');
     });
 
     $('.nav-tabs #drop-btn-3').find('a').click(function(e) {
@@ -100,6 +109,14 @@ function topMenu() {
 }
 
 function loadInitiateResults(reset) {
+    if (loading) return;
+    loading = true;
+    $('#loading').show();
+
+    $.get("/")
+}
+
+function loadInitiateResultsbck(reset) {
     if (loading) return;
     loading = true;
     $('#loading').show();

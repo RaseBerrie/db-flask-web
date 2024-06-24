@@ -35,7 +35,21 @@ def data_fining(data):
 
 @app.route('/')
 def main():
-    return render_template('dashboard.html')
+    query = f'SELECT DISTINCT company FROM rootdomain'
+    category = query_database(query)
+
+    return render_template('layout.html', categories=category)
+
+@app.route('/subcat/<string:parent_id>')
+def sub_cat(parent_id):
+    query = '''
+        SELECT sd.id, sd.sub_url FROM subdomain sd
+        JOIN conn_root_sub crs ON sd.id = crs.sub_id
+        JOIN rootdomain rd ON rd.id = crs.root_id
+        WHERE rd.company = %s;
+    '''
+    data = query_database(query, (parent_id,))
+    return jsonify(data)
 
 @app.route('/content')
 def content():
