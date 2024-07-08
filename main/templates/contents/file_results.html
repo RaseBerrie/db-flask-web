@@ -1,0 +1,27 @@
+{% for data in datas %}
+<tr>
+    <td style = "text-align: center; word-break: keep-all; font-weight: 700; padding: 0;">
+    {% if data[1] == 'PDF' %}
+        {{ data[1] }}
+    {% elif data[1] == 'XLSX' %}
+        <span style = "color: green;">{{ data[1] }}</span>
+    {% elif data[1] == 'PPTX' %}
+        <span style = "color: firebrick;">{{ data[1] }}</span>
+    {% elif data[1] == 'DOCX' %}
+        <span style = "color: steelblue;">{{ data[1] }}</span>
+    {% else %}
+        {% set others = data[3].split('.') %}
+        <span style = "color: darkslateblue;">{{ others[-1].upper() }}</span>
+    {% endif %}
+    </td>
+    <td>
+        <a href='{{ data[3] }}'>{{ data[2] }}</a>
+        <span id="tag">{{ data[0] }}</span>
+
+        <span id="count-result" style="display: none;">{{ count }}</span>
+    </td>
+    <td>
+        {{ data[4] }}
+    </td>
+</tr>
+{% endfor %}

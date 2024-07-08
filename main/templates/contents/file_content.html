@@ -1,0 +1,102 @@
+{% extends "index.html" %}
+{% block content %}
+
+<div class="top-container">
+    <div class="top-align-box">
+        <button class="btn btn-primary" id="download">
+            CSV 다운로드
+        </button>
+        <button class="btn btn-default tags">PDF</button>
+        <button class="btn btn-default tags">XLSX</button>
+        <button class="btn btn-default tags">PPTX</button>
+        <button class="btn btn-default tags">DOCX</button>
+        <button class="btn btn-default tags">기타</button>
+    </div>
+    <div class="top-align-box">
+        <form id="searchForm">
+            <div class="input-group">
+            <div class="input-group-btn search-panel">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <span id="search-concept">파일 이름</span> <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu scrollable-dropdown" role="menu">
+                <li><a href="#">파일 이름</a></li>
+                <li><a href="#">주요 데이터</a></li>
+            </ul>
+            </div>
+            <input type="hidden" name="search-param" id="search-param" value="파일 이름">
+            <input type="text" class="form-control" id="searchInput" placeholder="Search">
+            <span class="input-group-btn"><button class="btn btn-default" id="submitButton" type="submit"><span class="glyphicon glyphicon-search"></span></button></span>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="body-container">
+<div class="top-align-box">
+    <div class="top-total">
+        검색 결과: <strong></strong>개
+    </div>
+</div>
+
+<table style="table-layout: fixed; word-break: break-all;">
+    <thead>
+        <tr>
+            <th style="width: 3%; text-align: center;">타입</th>
+            <th>파일 이름</th>
+            <th>주요 데이터</th>
+        </tr>
+    </thead>
+    <tbody id="results"></tbody>
+</table>
+</div>
+
+<div id="loading" style="text-align: center; display: none;">
+    <img src="{{ url_for('static', filename='loading.gif') }}" alt="Loading..."
+    style="margin: 20px; width: 50px; height: 50px;"/>
+</div>
+</div>
+
+<script>
+var page = 1;
+var pagename = "/fileparses";
+$('#' + pagename.substr(1)).addClass("selected");
+
+var loading = false;
+var endofdata = false;
+var queryed = false;
+
+loadInitiateResults(true, pagename);
+downloadButton(pagename);
+
+$('#searchForm').on('submit', function(event) {
+    event.preventDefault();
+    $('#results').empty();
+
+    page = 1;
+    queryed = true;
+    loadResults(true, pagename);
+});
+
+$('.tags').on('click', function(event) {
+    event.preventDefault();
+    $('#results').empty();
+
+    $(this).addClass('active').siblings().removeClass('active');
+
+    page = 1;
+    if (queryed) loadResults(true, pagename);
+    else loadInitiateResults(true, pagename);
+});
+
+$(window).scroll(function() {
+    if (page >= parseInt(Number($('.top-total strong').text()) / 30) + 1) endofdata = true;
+    if ($(window).scrollTop() + $(window).height() >= $(document).height() && !endofdata) {
+        if (queryed) loadResults(false, pagename);
+        else loadInitiateResults(false, pagename);
+    }
+});
+</script>
+</div>
+
+{% endblock %}

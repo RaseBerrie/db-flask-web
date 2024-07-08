@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </head>
@@ -36,20 +38,16 @@
           <i class="fa-solid fa-square-poll-horizontal"></i>
           <span>크롤링 결과</span>
         </li>
-        <li id="subdomain">
-          <i class="fa-solid fa-sitemap"></i>
-          <span>서브도메인</span>
-        </li>
-        <li id="logins">
+        <li id="loginpage">
           <i class="fa-solid fa-square-arrow-up-right"></i>
           <span>로그인 페이지</span>
         </li>
-        <li id="admins">
+        <li id="adminpage">
           <i class="fa-solid fa-unlock"></i>
           <span>관리자 페이지</span>
         </li>
         <hr />
-        <li id="files">
+        <li id="fileparses">
           <i class="fa-solid fa-file-arrow-down"></i>
           <span>파일 다운로드</span>
         </li>
@@ -61,7 +59,7 @@
           <i class="fa-brands fa-square-js"></i>
           <span>소스 내 중요 정보 노출</span>
         </li>
-        <li id="showns">
+        <li id="neednot">
           <i class="fa-solid fa-square-xmark"></i>
           <span>불필요한 정보 노출</span>
         </li>
@@ -71,26 +69,13 @@
 
   <div class="page-wrapper">
     <div class="nav-wrapper">
-        {% include 'category.html' %}
+        {% include 'dropdown.html' %}
     </div>
     <div class="content-wrapper">
         {% block content %}{% endblock %}
     </div>
   </div>  
 </div>
-
-<script>
-$(function() {
-  function menuClick() {
-    $('#side-nav-list li').on('click', function() {
-      var activeTab = $(this).attr("id");
-      if (activeTab != "dashboard" && activeTab != "content") {
-        location.href = '/content/' + activeTab;
-      } else location.href = '/' + activeTab;
-    }
-  )} menuClick();
-});
-</script>
-
+<script> menuClick(); </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 
     <div class="dropdown" id="drop-btn-1">
       <button class="nav-tab btn dropdown-toggle" data-toggle="dropdown">
-        <span id="drop-1">회사명</span>
+        <span id="drop-1">전체</span>
         <i class="fa-solid fa-caret-down"></i>
       </button>
       <ul class="dropdown-menu" id="first-level-menu"></ul>
@@ -38,23 +38,37 @@
 
 <script>
 $(function() {
-  $.get("/first_level", function(data) {
+  cookieControl();
+  $.get("/firstlevel", function(data) {
     $('#first-level-menu').html(data);
     topMenu();
   })
 })
 
+function cookieControl() {
+  if ($.cookie('topMenu') === undefined) {
+    var cookie = {"comp": [0, "전체"], "root": [0, "루트 도메인"], "sub": [0, "서브 도메인"]};
+    $.cookie("topMenu", JSON.stringify(cookie), { expires: 10/1440 });
+  }
+
+  cookie = JSON.parse($.cookie("topMenu"));
+  $('#drop-1').text(cookie.comp[1]);
+  $('#drop-2').text(cookie.root[1]);
+  $('#drop-3').text(cookie.sub[1]);
+
+  firstLevel(cookie.comp[0]);
+  secondLevel(cookie.root[0]);
+}
+
 function firstLevel(categoryId) {
-  document.cookie = "companyId=" + Number(categoryId);
-  $.get("/second_level/" + categoryId, function(data) {
+  $.get("/secondlevel/" + categoryId, function(data) {
     $('#second-level-menu').html(data);
     topMenu();
   })
 }
 
 function secondLevel(categoryId) {
-  document.cookie = "companyId=" + Number(categoryId);
-  $.get("/third_level/" + categoryId, function(data) {
+  $.get("/thirdlevel/" + categoryId, function(data) {
     $('#third-level-menu').html(data);
     topMenu();
   })

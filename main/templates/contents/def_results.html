@@ -1,0 +1,42 @@
+{% for data in datas %}
+<tr>
+    <td>
+        {{ data[1] }} <span id = "tag"> {{ data[0] }} </span>
+    </td>
+    <td>
+        {{ data[2] }}
+        <span id="count-result" style="display: none;">{{ count }}</span>    
+    </td>
+    <td>
+        {% if data[3]|length > 30 %}
+        <a href="{{ data[3] }}" title="{{ data[3] }}">
+            {{ data[3][:30] }}...
+        </a>
+        
+        {% else %}
+        <a href="{{ data[3] }}" title="{{ data[3] }}">
+            {{ data[3] }}
+        </a>
+        
+        {% endif %}
+    </td>
+    <td>
+        {% if data[4]|length > 40 %}
+        <div class="show-less">
+            {{ data[4][:40] }}...
+            <button class="see-more" id="tag" style="border: none; background-color: #B9BBBF">
+                더보기
+            </button>
+        </div>
+        <div class="show-more" style="display:none">
+            {{ data[4] }}
+            <button class="see-less" id="tag" style="border: none;">
+                접기
+            </button>
+        </div>
+
+        {% else %} {{ data[4][:40] }}
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}

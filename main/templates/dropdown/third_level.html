@@ -1,0 +1,9 @@
+<li class="dropdown-item" style="overflow: auto; max-height: 50vh;">
+  <a href="#" value="0">전체</a>
+  <hr style="margin: 5px 10px;"/>
+
+  {% for category in categories %}
+  <a href="#" value="{{ category[0] }}">{{ category[1] }}</a>
+  {% endfor %}
+
+</li>
